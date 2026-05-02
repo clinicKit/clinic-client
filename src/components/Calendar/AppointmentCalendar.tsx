@@ -20,6 +20,7 @@ export const AppointmentCalendar = () => {
   const { t, formatTime, calendarLocale } = useLocalization();
   const calendarRef = useRef<FullCalendar>(null);
   const draggableRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [events, setEvents] = useState<any[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -198,17 +199,21 @@ export const AppointmentCalendar = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      const calendarApi = calendarRef.current?.getApi();
-      if (!calendarApi) return;
-      if (window.innerWidth < 768) {
-        calendarApi.changeView('listDay');
-      } else {
-        calendarApi.changeView('timeGridWeek');
-      }
+      const nextIsMobile = window.innerWidth < 768;
+      setIsMobile(prev => {
+        if (prev === nextIsMobile) return prev;
+
+        const calendarApi = calendarRef.current?.getApi();
+        if (calendarApi) {
+          calendarApi.changeView(nextIsMobile ? 'listDay' : 'timeGridWeek');
+        }
+
+        return nextIsMobile;
+      });
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Set initial view
+    handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -236,11 +241,11 @@ export const AppointmentCalendar = () => {
           <FullCalendar
             ref={calendarRef}
             plugins={[timeGridPlugin, dayGridPlugin, listPlugin, interactionPlugin]}
-            initialView={window.innerWidth < 768 ? 'listDay' : 'timeGridWeek'}
+            initialView={isMobile ? 'listDay' : 'timeGridWeek'}
             headerToolbar={{
-              left: 'prev,next today',
+              left: isMobile ? 'prev,next' : 'prev,next today',
               center: 'title',
-              right: window.innerWidth < 768 ? 'listDay,dayGridMonth' : 'listDay,timeGridWeek,dayGridMonth',
+              right: isMobile ? 'listDay,dayGridMonth' : 'listDay,timeGridWeek,dayGridMonth',
             }}
             buttonText={{
               today: t.calendar.buttons.today,
@@ -248,6 +253,9 @@ export const AppointmentCalendar = () => {
               week: t.calendar.buttons.week,
               listDay: t.calendar.buttons.day,
             }}
+            titleFormat={isMobile
+              ? { month: 'short', day: 'numeric' }
+              : { year: 'numeric', month: 'long' }}
             listDayFormat={{ weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }}
             height="auto"
             allDaySlot={false}
