@@ -41,77 +41,95 @@ export const PricingCard = ({ plan, billingPeriod, ctaText }: PricingCardProps) 
 
   return (
     <div
-      className={`relative bg-white rounded-2xl p-8 border-2 transition-all duration-300 hover:shadow-xl flex flex-col ${
+      className={`relative flex h-full flex-col rounded-[2rem] p-2 transition-all duration-300 hover:-translate-y-1 ${
         plan.popular
-          ? 'border-accent-600 shadow-lg scale-105'
-          : 'border-border-light hover:border-accent-200'
+          ? 'bg-[#20212b] shadow-[0_24px_48px_-24px_rgba(0,0,0,0.42)] md:-translate-y-2'
+          : 'bg-white shadow-[0_0_0_1px_rgba(17,24,39,0.06),0_18px_36px_-26px_rgba(17,24,39,0.28)]'
       }`}
     >
-      {plan.popular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="bg-accent-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+      <div
+        className={`flex h-full flex-col rounded-[1.65rem] border p-8 ${
+          plan.popular
+            ? 'border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] text-white'
+            : 'border-[#edf0ee] bg-[linear-gradient(180deg,#fff,#fbfaf8)] text-text-primary'
+        }`}
+      >
+        {plan.popular && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2">
+            <span className="rounded-full bg-white px-4 py-1 text-sm font-medium text-[#20212b]">
             {t.pricing.popular}
-          </span>
-        </div>
-      )}
-
-      <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-text-primary mb-2">{plan.name}</h3>
-        <p className="text-text-secondary text-sm mb-4">{plan.description}</p>
-        
-        <div className="mb-2">
-          {billingPeriod === 'yearly' && savings > 0 && (
-            <div className="mb-2">
-              <span className="text-lg line-through text-red-500 font-semibold">
-                {formatPrice(originalMonthlyPrice)}
-              </span>
-              <span className="text-xs text-text-muted ml-1">{t.common.perMonth}</span>
-            </div>
-          )}
-          <div>
-            <span className="text-4xl font-bold text-text-primary">
-              {formatPrice(billingPeriod === 'yearly' ? monthlyEquivalent : currentPrice)}
             </span>
-            <span className="text-text-muted text-sm ml-1">{t.common.perMonth}</span>
           </div>
-          {billingPeriod === 'yearly' && (
-            <div className="mt-1">
-              <span className="text-sm text-green-600 font-medium">
-                {interpolate(t.pricing.savingsPerMonth, { amount: formatPrice(savings) })}
-              </span>
-            </div>
-          )}
-        </div>
+        )}
+
+        <div className="mb-6 text-center">
+          <h3 className={`mb-2 text-2xl font-medium tracking-[-0.03em] ${plan.popular ? 'text-white' : 'text-[#20212b]'}`}>{plan.name}</h3>
+          <p className={`mb-4 text-sm ${plan.popular ? 'text-white/68' : 'text-text-secondary'}`}>{plan.description}</p>
         
+          <div className="mb-2">
+            {billingPeriod === 'yearly' && savings > 0 && (
+              <div className="mb-2">
+                <span className={`text-lg font-semibold line-through ${plan.popular ? 'text-white/45' : 'text-red-500'}`}>
+                  {formatPrice(originalMonthlyPrice)}
+                </span>
+                <span className={`ml-1 text-xs ${plan.popular ? 'text-white/55' : 'text-text-muted'}`}>{t.common.perMonth}</span>
+              </div>
+            )}
+            <div>
+              <span className={`text-4xl font-semibold tracking-[-0.04em] ${plan.popular ? 'text-white' : 'text-[#20212b]'}`}>
+                {formatPrice(billingPeriod === 'yearly' ? monthlyEquivalent : currentPrice)}
+              </span>
+              <span className={`ml-1 text-sm ${plan.popular ? 'text-white/55' : 'text-text-muted'}`}>{t.common.perMonth}</span>
+            </div>
+            {billingPeriod === 'yearly' && (
+              <div className="mt-1">
+                <span className={`text-sm font-medium ${plan.popular ? 'text-[#9ee3bf]' : 'text-green-600'}`}>
+                  {interpolate(t.pricing.savingsPerMonth, { amount: formatPrice(savings) })}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
         {billingPeriod === 'yearly' && (
-          <span className="text-text-muted text-xs">
+          <span className={`text-center text-xs ${plan.popular ? 'text-white/52' : 'text-text-muted'}`}>
             {interpolate(t.pricing.yearlyTotal, { amount: formatPrice(currentPrice) })}
           </span>
         )}
+
+        <ul className="mb-8 mt-8 flex-1 space-y-3">
+          {plan.features.map((feature, fIndex) => (
+            <li key={fIndex} className="flex items-start gap-3">
+              {feature.included ? (
+                <Check className={`${plan.popular ? 'text-[#9ee3bf]' : 'text-green-600'} mt-0.5 flex-shrink-0`} size={20} />
+              ) : (
+                <X className={`${plan.popular ? 'text-white/35' : 'text-text-muted'} mt-0.5 flex-shrink-0`} size={20} />
+              )}
+              <span
+                className={
+                  feature.included
+                    ? plan.popular ? 'text-white/86' : 'text-text-primary'
+                    : plan.popular ? 'text-white/40 line-through' : 'text-text-muted line-through'
+                }
+              >
+                {feature.text}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <Button
+          className={`mt-auto w-full rounded-full ${
+            plan.popular
+              ? 'text-[#20212b] hover:bg-[#f4f4f2]'
+              : 'border-[#e7ebe8] bg-[#f5f4f0] text-[#20212b] hover:bg-[#ece9e1]'
+          }`}
+          variant={plan.popular ? 'primary' : 'secondary'}
+          onClick={() => navigate('/register')}
+        >
+          {ctaText}
+        </Button>
       </div>
-
-      <ul className="space-y-3 mb-8 flex-1">
-        {plan.features.map((feature, fIndex) => (
-          <li key={fIndex} className="flex items-start gap-3">
-            {feature.included ? (
-              <Check className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
-            ) : (
-              <X className="text-text-muted flex-shrink-0 mt-0.5" size={20} />
-            )}
-            <span className={feature.included ? 'text-text-primary' : 'text-text-muted line-through'}>
-              {feature.text}
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      <Button
-        className="w-full mt-auto"
-        variant={plan.popular ? 'primary' : 'secondary'}
-        onClick={() => navigate('/register')}
-      >
-        {ctaText}
-      </Button>
     </div>
   );
 };
