@@ -33,8 +33,8 @@ export const Footer = ({ translations }: FooterProps) => {
           <div>
             <h4 className="font-semibold mb-4 text-white">{translations.footer.contactsTitle}</h4>
             <ul className="space-y-2 text-gray-400">
-              <li>Email: support@tisq.kz</li>
-              <li>Tel: +7 (777) 123-45-67</li>
+              <li>Email: algalyq@gmail.com</li>
+              <li>Tel: +7 (777) 390-39-07</li>
             </ul>
           </div>
         </div>

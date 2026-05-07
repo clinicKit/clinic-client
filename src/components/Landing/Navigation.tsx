@@ -16,12 +16,12 @@ export const Navigation = () => {
       <div className="mx-auto max-w-7xl rounded-[1.75rem] border border-white/70 bg-white/78 shadow-[0_12px_30px_-18px_rgba(17,24,39,0.28),0_0_0_1px_rgba(17,24,39,0.04)] backdrop-blur-xl">
         <div className="flex h-16 items-center justify-between px-4 sm:px-5">
           <button className="flex items-center gap-3" onClick={() => navigate('/')}>
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#20212b] shadow-[0_10px_20px_-10px_rgba(0,0,0,0.45)]">
-              <span className="text-base font-semibold text-white">T</span>
+            <div className="flex h-12 w-12 items-center justify-center p-1.5">
+              <img src="/icon_clinicKit.png" alt="clinicKit" className="h-full w-full object-contain" />
             </div>
             <div className="text-left">
-              <span className="block text-lg font-semibold tracking-[-0.03em] text-[#20212b]">TisQ</span>
-              <span className="block text-[11px] uppercase tracking-[0.18em] text-text-secondary">Clinic OS</span>
+              <span className="block text-lg font-semibold tracking-[-0.03em] text-[#20212b]">clinicKit</span>
+              <span className="block text-[11px] uppercase tracking-[0.18em] text-text-secondary">новый МиС</span>
             </div>
           </button>
 

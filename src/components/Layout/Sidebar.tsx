@@ -55,7 +55,7 @@ export const Sidebar = () => {
         <div className={`mb-8 flex items-center justify-between ${sidebarCollapsed ? 'px-1' : 'px-3'} py-2`}>
           {!sidebarCollapsed && (
             <div>
-              <h1 className="text-xl font-bold text-accent-600">TisQ</h1>
+              <h1 className="text-xl font-bold text-accent-600">clinicKit</h1>
               <span className="text-xs text-text-muted">{t.layout.sidebar.subtitle}</span>
             </div>
           )}

@@ -1,11 +1,8 @@
-// import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
   CheckCircle2,
-  // Clock3,
   MessageSquareMore,
-  // Activity,
   Calendar,
   Users,
   Bell,
@@ -13,19 +10,15 @@ import {
   Shield,
   Zap,
   Sparkles,
-  Stethoscope,
-  // ChevronRight
+  Stethoscope
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Navigation } from '../components/Landing/Navigation';
-// import { PricingCard } from '../components/Landing/PricingCard';
-// import { RevenueChart } from '../components/Landing/RevenueChart';
 import { Footer } from '../components/Landing/Footer';
 import { useLocalization } from '../hooks/useLocalization';
 
 export const LandingPage = () => {
   const { t } = useLocalization();
-  // const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const navigate = useNavigate();
 
   const featuresList = [
@@ -61,23 +54,6 @@ export const LandingPage = () => {
     },
   ];
 
-  // const workflowSteps = [
-  //   {
-  //     icon: Clock3,
-  //     title: t.features.items[0].title,
-  //     description: t.features.items[0].description,
-  //   },
-  //   {
-  //     icon: MessageSquareMore,
-  //     title: t.features.items[2].title,
-  //     description: t.features.items[2].description,
-  //   },
-  //   {
-  //     icon: Activity,
-  //     title: t.features.items[3].title,
-  //     description: t.features.items[3].description,
-  //   },
-  // ];
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#fff_0%,#fffaf7_48%,#ffffff_100%)] text-text-primary">
@@ -129,7 +105,7 @@ export const LandingPage = () => {
                   <div className="rounded-[1.5rem] bg-white/90 p-4 sm:p-5 shadow-[0_0_0_1px_rgba(17,24,39,0.04),0_12px_24px_-18px_rgba(17,24,39,0.2)]">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-medium uppercase tracking-[0.2em] text-text-secondary">TisQ</p>
+                        <p className="text-xs font-medium uppercase tracking-[0.2em] text-text-secondary">clinicKit</p>
                         <h3 className="mt-2 text-lg sm:text-xl font-semibold text-[#20212b]">{t.features.items[0].title}</h3>
                       </div>
                       <div className="rounded-2xl bg-[#20212b] p-3 text-white shadow-[0_10px_20px_-8px_rgba(0,0,0,0.45)]">
@@ -293,72 +269,6 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      {/* <section id="pricing" className="px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#edf0ee] bg-white px-4 py-2 text-sm text-text-secondary shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-                <Bell size={16} className="text-accent-600" />
-                {t.pricing.title}
-              </div>
-              <h2 className="mt-5 text-4xl font-medium tracking-[-0.03em] text-[#20212b] sm:text-5xl">{t.pricing.title}</h2>
-              <p className="mt-4 text-lg leading-8 text-text-secondary">{t.pricing.subtitle}</p>
-            </div>
-            <div className="flex flex-wrap items-center justify-end gap-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/85 p-1 shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(17,24,39,0.04)] backdrop-blur-md">
-                <button
-                  onClick={() => setBillingPeriod('monthly')}
-                  className={`rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${billingPeriod === 'monthly'
-                      ? 'bg-[#20212b] text-white shadow-[0_8px_20px_-10px_rgba(0,0,0,0.45)]'
-                      : 'text-text-secondary hover:text-text-primary'
-                    }`}
-                >
-                  {t.pricing.monthly}
-                </button>
-                <button
-                  onClick={() => setBillingPeriod('yearly')}
-                  className={`rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${billingPeriod === 'yearly'
-                      ? 'bg-[#20212b] text-white shadow-[0_8px_20px_-10px_rgba(0,0,0,0.45)]'
-                      : 'text-text-secondary hover:text-text-primary'
-                    }`}
-                >
-                  {t.pricing.yearly}
-                </button>
-              </div>
-
-              <span className="inline-flex rounded-full bg-[#ecf7f0] px-3 py-1 text-xs font-semibold text-[#2e7a55]">
-                {t.pricing.save}
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {t.pricing.plans.map((plan, index) => (
-              <PricingCard
-                key={index}
-                plan={plan}
-                billingPeriod={billingPeriod}
-                ctaText={t.pricing.cta}
-              />
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="mb-4 text-text-secondary">
-              {t.pricing.customPlan}
-            </p>
-            <Button
-              variant="ghost"
-              className="rounded-full px-5 py-3 text-[#20212b]"
-              onClick={() => window.location.href = 'mailto:support@tisq.kz'}
-            >
-              {t.pricing.contact}
-              <ChevronRight size={16} className="ml-1" />
-            </Button>
-          </div>
-        </div>
-      </section> */}
 
       {/* CTA Section */}
       <section className="px-4 py-12 sm:py-20 sm:px-6 lg:px-8">
