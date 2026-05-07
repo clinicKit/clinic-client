@@ -33,7 +33,68 @@ export const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
   onLastNameChange,
   onNotesChange,
 }) => {
-  const { t, formatDateValue } = useLocalization();
+  const { t } = useLocalization();
+
+  // Custom date formatter using translation data
+  const formatSelectedDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    const month = t.booking.dateTimeSelection.months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month.toLowerCase()} ${year} г.`;
+  };
+
+  // Phone number formatter
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-digits
+    const digits = value.replace(/\D/g, '');
+    
+    // If empty, return empty
+    if (digits.length === 0) return '';
+    
+    let formatted = '+7';
+    
+    // Add first group (xxx)
+    if (digits.length > 1) {
+      formatted += ' (' + digits.substring(1, 4);
+      
+      // Close parenthesis and add second group
+      if (digits.length >= 4) {
+        formatted += ')-' + digits.substring(4, 7);
+        
+        // Add third group
+        if (digits.length >= 7) {
+          formatted += '-' + digits.substring(7, 9);
+          
+          // Add fourth group
+          if (digits.length >= 9) {
+            formatted += '-' + digits.substring(9, 11);
+          }
+        }
+      }
+    }
+    
+    return formatted;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let input = e.target.value;
+    
+    // Allow clearing the field
+    if (input === '' || input === '+' || input === '+7' || input === '+7 ') {
+      onPhoneChange('');
+      return;
+    }
+    
+    // If user starts typing without +7, add it
+    if (!input.startsWith('+7')) {
+      input = '+7' + input;
+    }
+    
+    // Format the phone number
+    const formatted = formatPhoneNumber(input);
+    onPhoneChange(formatted);
+  };
 
   return (
     <div className="space-y-5 min-h-[300px]">
@@ -46,10 +107,11 @@ export const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
         </label>
         <Input
           type="tel"
-          placeholder={t.booking.patientInfo.phonePlaceholder}
+          placeholder="+7 (xxx)-xxx-xx-xx"
           value={patientPhone}
-          onChange={(e) => onPhoneChange(e.target.value)}
+          onChange={handlePhoneChange}
           className="text-lg p-3"
+          maxLength={25}
         />
       </div>
       
@@ -100,7 +162,7 @@ export const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
         <div className="space-y-2 text-sm">
           <p><strong>{t.booking.patientInfo.service}</strong> {selectedService?.name}</p>
           <p><strong>{t.booking.patientInfo.doctor}</strong> {selectedDoctor?.name}</p>
-          <p><strong>{t.booking.patientInfo.date}</strong> {formatDateValue(selectedDate, { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p><strong>{t.booking.patientInfo.date}</strong> {formatSelectedDate(selectedDate)}</p>
           <p><strong>{t.booking.patientInfo.time}</strong> {selectedTime}</p>
           <p><strong>{t.booking.patientInfo.duration}</strong> {selectedService?.duration_minutes} {t.booking.serviceSelection.minutes}</p>
         </div>

@@ -32,13 +32,16 @@ export const PublicBookingPage = () => {
   const [selectedTime, setSelectedTime] = useState('');
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [availableDates, setAvailableDates] = useState<Record<string, number>>({});
+  const [loadingDates, setLoadingDates] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   
   const [patientPhone, setPatientPhone] = useState('');
   const [patientFirstName, setPatientFirstName] = useState('');
   const [patientLastName, setPatientLastName] = useState('');
   const [notes, setNotes] = useState('');
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://0.0.0.0:8000/api';
   const steps: Step[] = BOOKING_STEP_ICONS.map(({ number, key, icon }) => ({
     number,
     icon,
@@ -68,6 +71,38 @@ export const PublicBookingPage = () => {
 
     fetchData();
   }, [slug, apiUrl]);
+
+  useEffect(() => {
+    if (!slug || !selectedDoctor || !selectedService) {
+      setAvailableDates({});
+      return;
+    }
+
+    const fetchAvailableDates = async () => {
+      setLoadingDates(true);
+      try {
+        const response = await axios.get(
+          `${apiUrl}/booking/${slug}/available-dates`,
+          {
+            params: {
+              doctor_id: selectedDoctor,
+              service_id: selectedService,
+              year: currentMonth.getFullYear(),
+              month: currentMonth.getMonth() + 1
+            }
+          }
+        );
+        setAvailableDates(response.data);
+      } catch (error) {
+        console.error('Error loading available dates:', error);
+        setAvailableDates({});
+      } finally {
+        setLoadingDates(false);
+      }
+    };
+
+    fetchAvailableDates();
+  }, [slug, selectedDoctor, selectedService, currentMonth, apiUrl]);
 
   useEffect(() => {
     if (!slug || !selectedDate || !selectedDoctor || !selectedService) {
@@ -211,6 +246,10 @@ export const PublicBookingPage = () => {
               selectedTime={selectedTime}
               availableSlots={availableSlots}
               loadingSlots={loadingSlots}
+              availableDates={availableDates}
+              loadingDates={loadingDates}
+              currentMonth={currentMonth}
+              onMonthChange={setCurrentMonth}
               onDateChange={(date) => {
                 setSelectedDate(date);
                 setSelectedTime('');

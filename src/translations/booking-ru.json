@@ -34,7 +34,7 @@
   "patientInfo": {
     "title": "Ваши контактные данные",
     "phone": "Номер телефона",
-    "phonePlaceholder": "+7 (777) 123-45-67",
+    "phonePlaceholder": "+7 (xxx)-xxx-xx-xx",
     "firstName": "Имя",
     "firstNamePlaceholder": "Иван",
     "lastName": "Фамилия",

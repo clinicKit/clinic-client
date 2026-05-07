@@ -8,6 +8,10 @@ interface DateTimeSelectionProps {
   selectedTime: string;
   availableSlots: TimeSlot[];
   loadingSlots: boolean;
+  availableDates: Record<string, number>;
+  loadingDates: boolean;
+  currentMonth: Date;
+  onMonthChange: (date: Date) => void;
   onDateChange: (date: string) => void;
   onTimeChange: (time: string) => void;
 }
@@ -17,12 +21,25 @@ export const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
   selectedTime,
   availableSlots,
   loadingSlots,
+  availableDates,
+  loadingDates,
+  currentMonth,
+  onMonthChange,
   onDateChange,
   onTimeChange,
 }) => {
-  const { t, formatDateValue } = useLocalization();
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const { t } = useLocalization();
   const [showCalendar, setShowCalendar] = useState(false);
+
+  // Custom date formatter using translation data
+  const formatSelectedDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    const month = t.booking.dateTimeSelection.months[date.getMonth()];
+    const year = date.getFullYear();
+    const weekday = t.booking.dateTimeSelection.weekDaysFull[date.getDay() === 0 ? 6 : date.getDay() - 1];
+    return { formatted: `${day} ${month.toLowerCase()} ${year} г.`, weekday };
+  };
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -55,7 +72,7 @@ export const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
   };
 
   const changeMonth = (increment: number) => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + increment, 1));
+    onMonthChange(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + increment, 1));
   };
 
   const renderCalendar = () => {
@@ -82,19 +99,29 @@ export const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
       const dayStr = String(date.getDate()).padStart(2, '0');
       const dateString = `${year}-${month}-${dayStr}`;
       const isSelected = selectedDate === dateString;
+      const slotsCount = availableDates[dateString] || 0;
+      const hasSlots = slotsCount > 0;
       
       days.push(
         <button
           key={day}
           onClick={() => isAvailable && handleDateSelect(day)}
-          disabled={!isAvailable}
+          disabled={!isAvailable || !hasSlots}
           className={`
-            h-12 rounded-md text-base font-medium transition-all
-            ${isAvailable ? 'hover:bg-accent-100 cursor-pointer' : 'text-gray-300 cursor-not-allowed'}
+            relative h-12 rounded-md text-base font-medium transition-all
+            ${isAvailable && hasSlots ? 'hover:bg-accent-100 cursor-pointer' : 'text-gray-300 cursor-not-allowed'}
             ${isSelected ? 'bg-accent-600 text-white hover:bg-accent-700' : ''}
+            ${!isAvailable || !hasSlots ? 'opacity-40' : ''}
           `}
         >
-          {day}
+          <div className="flex flex-col items-center justify-center h-full">
+            <span>{day}</span>
+            {hasSlots && !isSelected && (
+              <div className="flex gap-0.5 mt-0.5">
+                <div className="w-1 h-1 rounded-full bg-accent-600"></div>
+              </div>
+            )}
+          </div>
         </button>
       );
     }
@@ -106,15 +133,22 @@ export const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
           <button
             onClick={() => changeMonth(-1)}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            disabled={loadingDates}
           >
             <ChevronLeft size={20} />
           </button>
-          <h3 className="font-semibold text-text-primary">
-            {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-text-primary">
+              {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+            </h3>
+            {loadingDates && (
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-accent-600 border-t-transparent"></div>
+            )}
+          </div>
           <button
             onClick={() => changeMonth(1)}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            disabled={loadingDates}
           >
             <ChevronRight size={20} />
           </button>
@@ -154,18 +188,15 @@ export const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
             className="w-full p-3 border-2 border-gray-200 rounded-lg text-left hover:border-accent-300 transition-all focus:outline-none focus:ring-2 focus:ring-accent-600"
           >
             {selectedDate ? (
-              <div>
-                <div className="font-medium text-text-primary">
-                  {formatDateValue(selectedDate, {
-                    day: 'numeric', 
-                    month: 'long', 
-                    year: 'numeric' 
-                  })}
-                </div>
-                <div className="text-sm text-text-muted mt-1">
-                  {formatDateValue(selectedDate, { weekday: 'long' })}
-                </div>
-              </div>
+              (() => {
+                const { formatted, weekday } = formatSelectedDate(selectedDate);
+                return (
+                  <div>
+                    <div className="font-medium text-text-primary">{formatted}</div>
+                    <div className="text-sm text-text-muted mt-1">{weekday}</div>
+                  </div>
+                );
+              })()
             ) : (
               <span className="text-text-muted">{t.booking.dateTimeSelection.selectDate}</span>
             )}
@@ -224,7 +255,7 @@ export const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
       {selectedDate && selectedTime && (
         <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
           <p className="text-green-800 font-medium">
-            ✓ {t.booking.dateTimeSelection.selected}: {formatDateValue(selectedDate, { day: 'numeric', month: 'long', year: 'numeric' })}, {selectedTime}
+            ✓ {t.booking.dateTimeSelection.selected}: {formatSelectedDate(selectedDate).formatted}, {selectedTime}
           </p>
         </div>
       )}

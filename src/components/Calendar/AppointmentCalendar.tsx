@@ -346,9 +346,9 @@ export const AppointmentCalendar = () => {
                     )}
                     {arg.event.title}
                   </div>
-                  {!isListView && (
+                  {(isWeekView || isMonthView) && (
                     <div
-                      className={`truncate ${isWeekView ? 'text-white/90' : 'text-text-muted-version-2'}`}
+                      className={`truncate ${isWeekView ? 'text-white/90' : 'text-gray-600'}`}
                       style={{
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',

@@ -150,7 +150,7 @@ export const ToothSVG: React.FC<ToothSVGProps> = ({
   useEffect(() => {
     Promise.all(
       ALL_TEETH.map((num) =>
-        fetch(`/${num}.svg`)
+        fetch(`/tooth/${num}.svg`)
           .then((r) => r.text())
           .then((text) => ({ num, data: parseSvg(text) }))
           .catch(() => ({ num, data: null }))
